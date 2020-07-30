@@ -65,18 +65,23 @@ export class CalculadoraComponent implements OnInit {
     const sinal: boolean = (this.resposta[0] === '-') ;
     const operandos: string[] = this.resposta.split(/[-+/*]/);
     const calculo: number[] = this.resposta.split(/[-+/*]/).map(Number);
+    const calculoTempo: Date[] = [];
 
     if (sinal) {
       calculo[1] -= calculo[1] * 2;
       offset++;
     }
 
-    for (let i = offset; i < 2; i++){
-      const numero: number[] = operandos[i].split(/[hms]/).map(Number);
+    for (let i = 0; i <= 1; i++){
+      const numeros: number[] = operandos[i + offset].split(/[hms]/).map(Number);
 
-      if () {
+      calculoTempo.push(this.buildOperandos(i === 0 ? this.primeirasUnidades
+                                                             : this.segundasUnidades, numeros));
 
-      }
+    }
+
+    if (sinal) {
+      calculoTempo[0].setDate(calculoTempo[0].getDate() - calculoTempo[0].getDate() * 2);
     }
 
 
@@ -92,9 +97,8 @@ export class CalculadoraComponent implements OnInit {
 
     // calculo.forEach(op => console.log(op));
 
-    this.tempo.setMinutes( this.tempo.getMinutes() + 27);
-    this.tempo.setTime(this.tempo.getTime() * 2);
-    console.log(this.tempo.getMinutes());
+
+    console.log(calculoTempo[0].getUTCHours());
     switch (this.operador) {
       case '+': {
         this.resposta = String( calculo[offset] + calculo[offset + 1] );
@@ -125,7 +129,6 @@ export class CalculadoraComponent implements OnInit {
   private addUnidades(unidade: string, listaUnidades: string[] ): void {
 
     if (unidade === 'h' && listaUnidades.length === 0) {
-      console.log('ta entrando quando n deve', listaUnidades.length);
       listaUnidades.push(unidade);
       this.resposta += unidade;
     } else if (unidade === 'm' && !listaUnidades.includes('s') && !listaUnidades.includes('m')){
@@ -135,5 +138,27 @@ export class CalculadoraComponent implements OnInit {
       listaUnidades.push(unidade);
       this.resposta += unidade;
     }
+  }
+
+  private buildOperandos(unidades: string[], numeros: number[]): Date {
+    const tempo = new Date(0);
+
+    if (unidades.length === 3) {
+      console.log('3 unidades');
+      tempo.setHours(numeros[0]);
+      tempo.setMinutes(tempo.getMinutes() + numeros[1]);
+      tempo.setSeconds(tempo.getSeconds() + numeros[2]);
+    } else if (unidades.includes('h')) {
+      console.log('h unidades' , numeros[0]);
+      tempo.setHours(numeros.shift());
+    } else if (unidades.includes('s')) {
+      console.log('s unidades');
+      tempo.setSeconds(numeros.pop());
+    } else if (unidades.includes('m')) {
+      console.log('m unidades');
+      tempo.setMinutes(numeros[unidades.indexOf('m')]);
+    }
+
+    return tempo;
   }
 }
