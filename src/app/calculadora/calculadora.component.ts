@@ -40,7 +40,7 @@ export class CalculadoraComponent implements OnInit {
     if (this.resposta !== '' && !this.endsWithAny(this.resposta,
                       '+', '-', '*', '/', 'h', 'm', 's')){
 
-      this.addUnidades(unidade, this.operador ? this.primeirasUnidades
+      this.addUnidades(unidade, !this.operador ? this.primeirasUnidades
                                                           : this.segundasUnidades);
 
     }
@@ -66,6 +66,7 @@ export class CalculadoraComponent implements OnInit {
     const operandos: string[] = this.resposta.split(/[-+/*]/);
     const calculo: number[] = this.resposta.split(/[-+/*]/).map(Number);
     const calculoTempo: Date[] = [];
+    const timeResposta = this.timeZeroBuilder();
 
     if (sinal) {
       calculo[1] -= calculo[1] * 2;
@@ -98,28 +99,36 @@ export class CalculadoraComponent implements OnInit {
     // calculo.forEach(op => console.log(op));
 
 
-    console.log(calculoTempo[0].getUTCHours());
+    console.log(new Date(1000).getSeconds());
     switch (this.operador) {
       case '+': {
-        this.resposta = String( calculo[offset] + calculo[offset + 1] );
+        timeResposta.setTime(calculoTempo[0].getTime() + calculoTempo[0].getTime());
+        // this.resposta = String( calculo[offset] + calculo[offset + 1] );
         this.operador = undefined;
         break;
       }
       case '-': {
-        this.resposta = String( calculo[offset] - calculo[offset + 1 ] );
+
+        timeResposta.setTime(calculoTempo[0].getTime() - calculoTempo[0].getTime());
+        // this.resposta = String( calculo[offset] - calculo[offset + 1 ] );
         this.operador = undefined;
         break;
       }case '*': {
-        this.resposta = String( calculo[offset] * calculo[1 + offset]);
+
+        timeResposta.setTime(calculoTempo[0].getTime() * calculoTempo[0].getTime());
+        // this.resposta = String( calculo[offset] * calculo[1 + offset]);
         this.operador = undefined;
         break;
       }case '/': {
-        this.resposta = String(calculo[offset] / calculo[offset + 1]);
+        timeResposta.setTime(calculoTempo[0].getTime() / calculoTempo[0].getTime());
+        // this.resposta = String(calculo[offset] / calculo[offset + 1]);
         this.operador = undefined;
         break;
       }
 
     }
+
+    this.resposta = this.buldResposta(timeResposta);
   }
 
   private endsWithAny(str: string, ...operadores: string[]): boolean {
@@ -141,7 +150,7 @@ export class CalculadoraComponent implements OnInit {
   }
 
   private buildOperandos(unidades: string[], numeros: number[]): Date {
-    const tempo = new Date(0);
+    const tempo = this.timeZeroBuilder();
 
     if (unidades.length === 3) {
       console.log('3 unidades');
@@ -160,5 +169,16 @@ export class CalculadoraComponent implements OnInit {
     }
 
     return tempo;
+  }
+
+  private buldResposta(timeResposta: Date): string {
+    return `${timeResposta.getHours()}h${timeResposta.getMinutes()}m${timeResposta.getSeconds()}s`;
+  }
+
+  private timeZeroBuilder(): Date {
+    const t = new Date(0);
+    t.setHours(0, 0, 0);
+
+    return t;
   }
 }
