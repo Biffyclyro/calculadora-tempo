@@ -7,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CalculadoraComponent implements OnInit {
   resposta = '';
+  private isResultado = false;
   operador: string;
   primeirasUnidades: string[] = [];
   segundasUnidades: string[] = [];
@@ -23,13 +24,29 @@ export class CalculadoraComponent implements OnInit {
       }
       case '+': case '-': case '/': case '*': {
         this.insereOperador(event.key, true);
+        break;
+      }
+      case 'h': case 'm': case 's': {
+        this.insereUnidade(event.key);
+        break;
+      }
+      default: {
+        const keyPressed = Number(event.key);
+        if (keyPressed.toString() !== 'NaN') {
+
+          this.insereNumero(keyPressed);
+        }
+        break;
       }
     }
-    console.log(event.key);
+    // console.log(event.key);
   }
 
   insereNumero(valor: number): void {
-
+    if (this.isResultado){
+      this.limpar();
+      this.isResultado = false;
+    }
     this.resposta += String(valor);
   }
 
@@ -46,9 +63,12 @@ export class CalculadoraComponent implements OnInit {
   }
 
   insereOperador(operador: string, keyBoard: boolean = false): void {
-    if (this.operador) { this.calcular(); }
-    if (this.resposta !== '') { this.operador = operador; }
-    if (!keyBoard) { this.resposta += operador; }
+    if (this.endsWithAny(this.resposta, 'h', 'm', 's')) {
+      if (this.isResultado) { this.isResultado = false; }
+      if (this.operador) { this.calcular(); }
+      if (this.resposta !== '') { this.operador = operador; }
+      this.resposta += operador;
+    }
   }
 
   limpar(): void {
@@ -63,12 +83,12 @@ export class CalculadoraComponent implements OnInit {
     let offset = 0;
     const sinal: boolean = (this.resposta[0] === '-') ;
     const operandos: string[] = this.resposta.split(/[-+/*]/);
-    const calculo: number[] = this.resposta.split(/[-+/*]/).map(Number);
+    // const calculo: number[] = this.resposta.split(/[-+/*]/).map(Number);
     const calculoTempo: Time[] = [];
     let timeResposta = this.timeZeroBuilder();
 
     if (sinal) {
-      calculo[1] -= calculo[1] * 2;
+      // calculo[1] -= calculo[1] * 2;
       offset++;
     }
 
@@ -91,7 +111,6 @@ export class CalculadoraComponent implements OnInit {
         const secondsA = this.parseForSeconds(calculoTempo[0]);
         const secondsB = this.parseForSeconds(calculoTempo[1]);
         timeResposta = this.parseForTime(secondsA + secondsB);
-        // this.resposta = String( calculo[offset] + calculo[offset + 1] );
         this.operador = undefined;
         break;
       }
@@ -99,7 +118,6 @@ export class CalculadoraComponent implements OnInit {
         const secondsA = this.parseForSeconds(calculoTempo[0]);
         const secondsB = this.parseForSeconds(calculoTempo[1]);
         timeResposta = this.parseForTime(secondsA - secondsB);
-        // this.resposta = String( calculo[offset] - calculo[offset + 1 ] );
         this.operador = undefined;
         break;
       }case '*': {
@@ -110,7 +128,6 @@ export class CalculadoraComponent implements OnInit {
 
         timeResposta = this.parseForTime(seconds);
 
-        // this.resposta = String( calculo[offset] * calculo[1 + offset]);
         this.operador = undefined;
         break;
       }case '/': {
@@ -120,13 +137,13 @@ export class CalculadoraComponent implements OnInit {
         seconds /= x;
 
         timeResposta = this.parseForTime(seconds);
-        // this.resposta = String(calculo[offset] / calculo[offset + 1]);
         this.operador = undefined;
         break;
       }
 
     }
 
+    this.isResultado = true;
     this.resposta = this.buldResposta(timeResposta);
   }
 

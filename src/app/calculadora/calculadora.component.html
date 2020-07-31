@@ -1,7 +1,7 @@
 <div class="container-fluid col-8 text-center p-0">
   <div class=" offset-4  ">
 
-    <table class="bg-primary ">
+    <table class="">
       <tr class="row  ">
 
           <input
@@ -9,9 +9,9 @@
             class="form-control text-right col-10"
             id="display"
             name="display"
-            [(ngModel)]="resposta"
+            [value]="resposta"
             (keydown)="onKey($event)"
-            >
+            readonly>
         <div
           type="button"
           (click)="limpar()"
@@ -136,6 +136,18 @@
           (click)="insereOperador('+')"
           id="btnSoma"
         > + </div>
+
+      </tr>
+      <tr class="row">
+        <div class="col-2"></div>
+        <div
+          type="button"
+          class="btn btn-dark col-2 "
+          (click) = "insereNumero(0)"
+          id="btn0"
+        > 0 </div>
+
+        <div class="col-8"></div>
 
       </tr>
     </table>
