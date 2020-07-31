@@ -10,8 +10,6 @@ export class CalculadoraComponent implements OnInit {
   operador: string;
   primeirasUnidades: string[] = [];
   segundasUnidades: string[] = [];
-  tempo: Date = new Date(0);
-
   constructor() { }
 
   ngOnInit(): void {
@@ -26,7 +24,6 @@ export class CalculadoraComponent implements OnInit {
       case '+': case '-': case '/': case '*': {
         this.insereOperador(event.key, true);
       }
-
     }
     console.log(event.key);
   }
@@ -67,8 +64,8 @@ export class CalculadoraComponent implements OnInit {
     const sinal: boolean = (this.resposta[0] === '-') ;
     const operandos: string[] = this.resposta.split(/[-+/*]/);
     const calculo: number[] = this.resposta.split(/[-+/*]/).map(Number);
-    const calculoTempo: Date[] = [];
-    const timeResposta = this.timeZeroBuilder();
+    const calculoTempo: Time[] = [];
+    let timeResposta = this.timeZeroBuilder();
 
     if (sinal) {
       calculo[1] -= calculo[1] * 2;
@@ -77,57 +74,52 @@ export class CalculadoraComponent implements OnInit {
 
     for (let i = 0; i <= 1; i++){
       const numeros: number[] = operandos[i + offset].split(/[hms]/).map(Number);
+      console.log(numeros);
 
       calculoTempo.push(this.buildOperandos(i === 0 ? this.primeirasUnidades
                                                              : this.segundasUnidades, numeros));
 
     }
 
-    if (sinal) {
+   /* if (sinal) {
       calculoTempo[0].setDate(calculoTempo[0].getDate() - calculoTempo[0].getDate() * 2);
-    }
+    }*/
 
 
-    console.log(new Date(1000).getSeconds());
     switch (this.operador) {
       case '+': {
-        const h = calculoTempo[0].getHours() + calculoTempo[1].getHours();
-        const m = calculoTempo[0].getMinutes() + calculoTempo[1].getMinutes();
-        const s = calculoTempo[0].getSeconds() + calculoTempo[1].getSeconds();
-        timeResposta.setHours(h, m, s);
-
-        console.log('tempo depois da soma????', timeResposta.toTimeString());
+        const secondsA = this.parseForSeconds(calculoTempo[0]);
+        const secondsB = this.parseForSeconds(calculoTempo[1]);
+        timeResposta = this.parseForTime(secondsA + secondsB);
         // this.resposta = String( calculo[offset] + calculo[offset + 1] );
         this.operador = undefined;
         break;
       }
       case '-': {
-        const h = calculoTempo[0].getHours() - calculoTempo[1].getHours();
-        const m = calculoTempo[0].getMinutes() - calculoTempo[1].getMinutes();
-        const s = calculoTempo[0].getSeconds() - calculoTempo[1].getSeconds();
-        timeResposta.setHours(h, m, s);
+        const secondsA = this.parseForSeconds(calculoTempo[0]);
+        const secondsB = this.parseForSeconds(calculoTempo[1]);
+        timeResposta = this.parseForTime(secondsA - secondsB);
         // this.resposta = String( calculo[offset] - calculo[offset + 1 ] );
         this.operador = undefined;
         break;
       }case '*': {
         const x = Number(operandos[offset + 1]);
 
-        let segundos = this.parseForSeconds(calculoTempo[0]);
-        segundos *= x;
+        let seconds = this.parseForSeconds(calculoTempo[0]);
+        seconds *= x;
 
-        timeResposta.setTime(this.parseForDate(segundos).getTime());
+        timeResposta = this.parseForTime(seconds);
 
-        console.log(timeResposta.toTimeString());
         // this.resposta = String( calculo[offset] * calculo[1 + offset]);
         this.operador = undefined;
         break;
       }case '/': {
         const x = Number(operandos[offset + 1]);
 
-        let segundos = this.parseForSeconds(calculoTempo[0]);
-        segundos /= x;
+        let seconds = this.parseForSeconds(calculoTempo[0]);
+        seconds /= x;
 
-        timeResposta.setTime(this.parseForDate(segundos).getTime());
+        timeResposta = this.parseForTime(seconds);
         // this.resposta = String(calculo[offset] / calculo[offset + 1]);
         this.operador = undefined;
         break;
@@ -156,55 +148,61 @@ export class CalculadoraComponent implements OnInit {
     }
   }
 
-  private buildOperandos(unidades: string[], numeros: number[]): Date {
-    const tempo = this.timeZeroBuilder();
+  private buildOperandos(unidades: string[], numeros: number[]): Time{
+    const tempo: Time = this.timeZeroBuilder();
 
+    console.log(numeros);
     if (unidades.length === 3) {
       console.log('3 unidades');
-      tempo.setHours(numeros[0]);
-      tempo.setMinutes(tempo.getMinutes() + numeros[1]);
-      tempo.setSeconds(tempo.getSeconds() + numeros[2]);
-    } else if (unidades.includes('h')) {
-      console.log('h unidades' , numeros[0]);
-      tempo.setHours(numeros.shift());
-    } else if (unidades.includes('s')) {
-      console.log('s unidades');
-      tempo.setSeconds(numeros.pop());
-    } else if (unidades.includes('m')) {
-      console.log('m unidades');
-      tempo.setMinutes(numeros[unidades.indexOf('m')]);
+      tempo.h = numeros[0];
+      tempo.m = numeros[1];
+      tempo.s = numeros[2];
+    } else {
+      if (unidades.includes('h')) {
+        console.log('h unidades' , numeros[0]);
+        tempo.h = numeros[unidades.indexOf('h')];
+      }
+      if (unidades.includes('s')) {
+        console.log('s unidades');
+        tempo.s = numeros[unidades.indexOf('s')];
+      }
+      if (unidades.includes('m')) {
+        console.log('m unidades');
+        tempo.m = numeros[unidades.indexOf('m')];
+      }
     }
-
+    console.log(tempo);
     return tempo;
   }
 
-  private buldResposta(timeResposta: Date): string {
-    return `${timeResposta.getHours()}h${timeResposta.getMinutes()}m${timeResposta.getSeconds()}s`;
+  private buldResposta(timeResposta: Time): string {
+    return `${timeResposta.h}h${timeResposta.m}m${timeResposta.s}s`;
   }
 
-  private timeZeroBuilder(): Date {
-    const t = new Date(0);
-    t.setHours(0, 0, 0);
-    return t;
+  private timeZeroBuilder(): Time{
+    return {h: 0, m: 0, s: 0};
   }
 
-  private parseForSeconds(t: Date): number {
-    let segundos = t.getSeconds();
-    segundos += t.getMinutes() * 60;
-    segundos += t.getHours() * 3600;
+  private parseForSeconds(t: Time): number {
+    let segundos = t.s;
+    segundos += t.m * 60;
+    segundos += t.h * 3600;
 
     return segundos;
   }
 
-  private parseForDate(n: number): Date {
+  private parseForTime(n: number): Time{
     const h = Math.floor(n / 3600);
     n %= 3600;
     const m = Math.floor(n / 60);
     const s = n % 60;
-    const d = this.timeZeroBuilder();
-    d.setHours(h, m, s);
 
-    return d;
-
+    return {h, m, s};
   }
+}
+
+interface Time {
+  h: number;
+  m: number;
+  s: number;
 }
