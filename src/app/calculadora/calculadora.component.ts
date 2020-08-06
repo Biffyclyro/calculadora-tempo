@@ -94,7 +94,6 @@ export class CalculadoraComponent implements OnInit {
 
     for (let i = 0; i <= 1; i++){
       const numeros: number[] = operandos[i + offset].split(/[hms]/).map(Number);
-      console.log(numeros);
 
       calculoTempo.push(this.buildOperandos(i === 0 ? this.primeirasUnidades
                                                              : this.segundasUnidades, numeros));
@@ -168,27 +167,21 @@ export class CalculadoraComponent implements OnInit {
   private buildOperandos(unidades: string[], numeros: number[]): Time{
     const tempo: Time = this.timeZeroBuilder();
 
-    console.log(numeros);
     if (unidades.length === 3) {
-      console.log('3 unidades');
       tempo.h = numeros[0];
       tempo.m = numeros[1];
       tempo.s = numeros[2];
     } else {
       if (unidades.includes('h')) {
-        console.log('h unidades' , numeros[0]);
         tempo.h = numeros[unidades.indexOf('h')];
       }
       if (unidades.includes('s')) {
-        console.log('s unidades');
         tempo.s = numeros[unidades.indexOf('s')];
       }
       if (unidades.includes('m')) {
-        console.log('m unidades');
         tempo.m = numeros[unidades.indexOf('m')];
       }
     }
-    console.log(tempo);
     return tempo;
   }
 
