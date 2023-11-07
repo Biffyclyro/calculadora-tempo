@@ -1,0 +1,163 @@
+<div class="container-fluid col-8 text-center p-0 mt-5">
+    <h1>Calculadora de tempo</h1>
+  
+  <div class=" offset-md-4  ">
+
+    <table class="m-4">
+      <tr class="row  ">
+
+          <input
+            type="text"
+            class="form-control text-right col-10"
+            id="display"
+            name="display"
+            [value]="resposta"
+            (keydown)="onKey($event)"
+            readonly>
+        <div
+          type="button"
+          (click)="limpar()"
+          class="btn btn-danger col-2"
+        > C </div>
+
+      </tr>
+      <tr class="row">
+        <div
+            type="button"
+            class="btn btn-dark kz-btn col-2"
+            (click) = "insereNumero(7)"
+            id="btn7"
+          > 7 </div>
+        <div
+            type="button"
+            class="btn btn-dark col-2"
+            (click) = "insereNumero(8)"
+            id="btn8"
+          > 8 </div>
+        <div
+            type="button"
+            class="btn btn-dark col-2 "
+            (click) = "insereNumero(9)"
+            id="btn9"
+          > 9 </div>
+
+        <div
+            type="button"
+            class="btn btn-success col-2"
+            (click)="insereUnidade('s')"
+            id="btSegundo"
+          > s </div>
+        <div
+          type="button"
+          (click)="calcular()"
+          class="btn btn-dark col-4"
+        > = </div>
+
+      </tr>
+
+      <tr class="row">
+        <div
+            type="button"
+            class="btn btn-dark col-2 "
+            (click) = "insereNumero(4)"
+            id="btn4"
+          > 4 </div>
+        <div
+            type="button"
+            class="btn btn-dark col-2 "
+            (click) = "insereNumero(5)"
+            id="btn5"
+          > 5 </div>
+        <div
+            type="button"
+            class="btn btn-dark col-2 "
+            (click) = "insereNumero(6)"
+            id="btn6"
+          > 6 </div>
+
+        <div
+            type="button"
+            class="btn btn-success col-2"
+            (click)="insereUnidade('m')"
+            id="btnMin"
+          > m </div>
+
+        <div
+            type="button"
+            class="btn btn-warning col-2"
+            (click)="insereOperador('/')"
+            id="btnDivisao"
+          > / </div>
+
+        <div
+            type="button"
+            class="btn btn-warning col-2"
+            (click)="insereOperador('*')"
+            id="btnMult"
+          > * </div>
+
+      </tr>
+
+      <tr class="row">
+        <div
+          type="button"
+          class="btn btn-dark col-2 "
+          (click) = "insereNumero(1)"
+          id="btn1"
+        > 1 </div>
+        <div
+          type="button"
+          class="btn btn-dark col-2 "
+          (click) = "insereNumero(2)"
+          id="btn2"
+        > 2 </div>
+        <div
+          type="button"
+          class="btn btn-dark col-2 "
+          (click) = "insereNumero(3)"
+          id="btn3"
+        > 3 </div>
+
+        <div
+          type="button"
+          class="btn btn-success col-2"
+          (click)="insereUnidade('h')"
+          id="btnHora"
+        > h </div>
+
+        <div
+          type="button"
+          class="btn btn-warning col-2"
+          (click)="insereOperador('-')"
+          id="btnSub"
+        > - </div>
+
+        <div
+          type="button"
+          class="btn btn-warning col-2"
+          (click)="insereOperador('+')"
+          id="btnSoma"
+        > + </div>
+
+      </tr>
+      <tr class="row">
+        <div class="col-2"></div>
+        <div
+          type="button"
+          class="btn btn-dark col-2 "
+          (click) = "insereNumero(0)"
+          id="btn0"
+        > 0 </div>
+
+        <div class="col-8"></div>
+
+      </tr>
+    </table>
+
+
+  </div>
+
+    <p>Insira o tempo seguido da unidade!</p>
+    <p>Multiplicações e divisões não precisam de unidades!</p>
+
+</div>
